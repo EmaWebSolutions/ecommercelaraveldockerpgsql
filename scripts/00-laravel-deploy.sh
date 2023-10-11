@@ -12,3 +12,6 @@ php artisan route:cache
 echo "Running migrations..."
 php artisan migrate:fresh --force
 
+echo "Seeding the database..."
+php artisan db:seed --force
+
