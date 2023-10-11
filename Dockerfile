@@ -37,9 +37,6 @@ RUN composer install --ignore-platform-reqs
 RUN chown -R www-data:www-data storage
 RUN chmod -R 775 storage
 
-# Run the config:cache command
-RUN php artisan config:cache
-
 
 # Make the entrypoint.sh script executable within the container
 RUN chmod +x ./entrypoint.sh
