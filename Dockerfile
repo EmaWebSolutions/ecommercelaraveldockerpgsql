@@ -34,8 +34,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer install --ignore-platform-reqs
 
 
-# Set permissions for Laravel
-RUN chmod -R 775 /var/www/html/storage
+RUN chown -R www-data:www-data storage
+RUN chmod -R 775 storage
+
+# Run the config:cache command
+RUN php artisan config:cache
 
 
 # Make the entrypoint.sh script executable within the container
