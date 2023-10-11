@@ -8,6 +8,7 @@ use App\Models\Setting;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\File; // Import the File class
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Routing\UrlGenerator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,11 +27,18 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(UrlGenerator $url)
     {
+
         Schema::defaultStringLength(191);
       
+           
 
+        if (env('APP_ENV') == 'production') {
+            $url->forceScheme('https');
+        }
+
+        
             try {
                 $language = Setting::where('slug', 'default_language')->first();
                 if ($language) {
