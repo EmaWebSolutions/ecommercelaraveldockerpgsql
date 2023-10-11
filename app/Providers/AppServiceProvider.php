@@ -8,7 +8,6 @@ use App\Models\Setting;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\File; // Import the File class
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Routing\UrlGenerator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,36 +26,26 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-   public function boot(UrlGenerator $url)
+    public function boot()
     {
-
-
-
+        // Set the default string length for database columns
         Schema::defaultStringLength(191);
-         if (env('APP_ENV') == 'production') {
-            $url->forceScheme('https');
-        }
-           
 
-            try {
-                $language = Setting::where('slug', 'default_language')->first();
-                if ($language) {
-                    $locale = $language->value;
+        try {
+            $language = Setting::where('slug', 'default_language')->first();
+            if ($language) {
+                $locale = $language->value;
 
-                    $lang = Language::where('locale', $locale)->first();
-                    session(['APP_LOCALE' => $locale, 'lang_dir' => $lang->direction]);
-
-                }
-            } catch (\Exception $e) {
-                //
+                $lang = Language::where('locale', $locale)->first();
+                session(['APP_LOCALE' => $locale, 'lang_dir' => $lang->direction]);
             }
+        } catch (\Exception $e) {
+            //
+        }
 
-            
-            // Code that relies on migrations and seeders here
-           /* $all_menus = Menu::where('is_static', INACTIVE)->with('submenus')->latest()->get();
-            $allsettings = allsetting();
-            view()->share(['all_menus' => $all_menus, 'allsettings' => $allsettings]);*/
-        
-        
+        // Code that relies on migrations and seeders here
+        $all_menus = Menu::where('is_static', INACTIVE)->with('submenus')->latest()->get();
+        $allsettings = allsetting();
+         view()->share(['all_menus' => $all_menus, 'allsettings' => $allsettings]);
     }
 }
