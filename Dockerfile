@@ -1,44 +1,20 @@
-# Use the official PHP 8.2 image as the base image
-FROM php:8.2-fpm
+FROM richarvey/nginx-php-fpm:1.9.1
 
-# Install system dependencies and PHP extensions
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    zip \
-    unzip \
-    git \
-    libonig-dev \
-    libzip-dev \
-    postgresql-client \
-    libpq-dev \  
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql mbstring zip exif pdo_pgsql
-
-# Set the working directory in the container
-WORKDIR /var/www/html
-
-# Copy the Laravel application files to the container
 COPY . .
 
+# Image config
+ENV SKIP_COMPOSER 1
+ENV WEBROOT /var/www/html/public
+ENV PHP_ERRORS_STDERR 1
+ENV RUN_SCRIPTS 1
+ENV REAL_IP_HEADER 1
 
-# Install Composer globally
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Laravel config
+ENV APP_ENV production
+ENV APP_DEBUG false
+ENV LOG_CHANNEL stderr
 
-# Install Laravel dependencies, ignoring platform requirements
-RUN composer install --ignore-platform-reqs
+# Allow composer to run as root
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
-
-RUN chown -R www-data:www-data storage
-RUN chmod -R 775 storage
-
-
-# Make the entrypoint.sh script executable within the container
-RUN chmod +x ./entrypoint.sh
-
-# Expose port 9000 for PHP-FPM (you can remove this if not needed)
-EXPOSE 9000
-
-# Use the custom entrypoint script as the container command
-CMD ["./entrypoint.sh"]
+CMD ["/start.sh"]

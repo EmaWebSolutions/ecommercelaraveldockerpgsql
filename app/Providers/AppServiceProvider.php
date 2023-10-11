@@ -27,18 +27,13 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(UrlGenerator $url)
+    public function boot()
     {
 
         Schema::defaultStringLength(191);
       
            
 
-        if (env('APP_ENV') == 'production') {
-            $url->forceScheme('https');
-        }
-
-        
             try {
                 $language = Setting::where('slug', 'default_language')->first();
                 if ($language) {
@@ -52,12 +47,12 @@ class AppServiceProvider extends ServiceProvider
                 //
             }
 
-             if (File::exists(base_path('migrations_and_seeders_completed.flag'))) {
+            
             // Code that relies on migrations and seeders here
-            $all_menus = Menu::where('is_static', INACTIVE)->with('submenus')->latest()->get();
+           /* $all_menus = Menu::where('is_static', INACTIVE)->with('submenus')->latest()->get();
             $allsettings = allsetting();
-            view()->share(['all_menus' => $all_menus, 'allsettings' => $allsettings]);
-        }
+            view()->share(['all_menus' => $all_menus, 'allsettings' => $allsettings]);*/
+        
         
     }
 }
